@@ -1,5 +1,5 @@
 {
-  "name": "sroze/api-platform-messenger",
+  "name": "imaximius/api-platform-messenger",
   "type": "symfony-bundle",
   "autoload": {
     "psr-4": {
@@ -7,7 +7,7 @@
     }
   },
   "require": {
-    "api-platform/core": ">=2.1",
-    "symfony/framework-bundle": "^3.3 || ^4.0"
+    "api-platform/core": "^2.1",
+    "symfony/framework-bundle": "^3.3 || ^4.0 || ^5.0"
   }
 }
