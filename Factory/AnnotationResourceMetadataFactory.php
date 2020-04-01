@@ -49,7 +49,7 @@ final class AnnotationResourceMetadataFactory implements ResourceMetadataFactory
             return $this->handleNotFound($parentResourceMetadata, $resourceClass);
         }
 
-        return $this->createMetadata($resourceAnnotation);
+        return $this->createMetadata($resourceClass, $resourceAnnotation);
     }
 
     /**
@@ -66,22 +66,27 @@ final class AnnotationResourceMetadataFactory implements ResourceMetadataFactory
         throw new ResourceClassNotFoundException(sprintf('Resource "%s" not found.', $resourceClass));
     }
 
-    private function createMetadata(ApiMessage $annotation): ResourceMetadata
+    private function createMetadata(string $messageClass, ApiMessage $annotation): ResourceMetadata
     {
         $method = $annotation->type === 'command' ? 'post' : 'get';
         $collectionOperations = [
             $method => ['method' => $method, 'controller' => 'api_platform_messenger.action.dispatch', 'defaults' => ['_api_platform_messenger_type' => $annotation->type]]
         ];
 
+        $graphqlOperation = $annotation->type === 'command' ? 'update' : 'query';
         return new ResourceMetadata(
             str_replace('/', '', $annotation->path),
             null,
             $annotation->path,
             [],
             $collectionOperations,
-            array_merge(['_api_platform_messenger' => true], $annotation->attributes),
+            array_merge(['_api_platform_messenger' => $messageClass], $annotation->attributes),
             [],
-            null
+            [
+                $graphqlOperation => [
+                    'return' => $annotation->return,
+                ],
+            ]
         );
     }
 }
